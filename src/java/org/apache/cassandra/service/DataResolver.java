@@ -419,11 +419,22 @@ public class DataResolver extends ResponseResolver
         @Override
         public UnfilteredRowIterator applyToPartition(UnfilteredRowIterator partition)
         {
-            partition = Transformation.apply(partition, counter);
+          
             // must apply and extend with same protection instance
             ShortReadRowProtection protection = new ShortReadRowProtection(partition.metadata(), partition.partitionKey());
             partition = MoreRows.extend(partition, protection);
-            partition = Transformation.apply(partition, protection); // apply after, so it is retained when we extend (in case we need to reextend)
+           try {
+            partition = Transformation.apply(partition, protection); 
+            // apply after, so it is retained when we extend (in case we need to reextend)
+            partition = Transformation.apply(partition, counter); //Reversing the order of counting, so that it happens after transformation
+           }
+           catch(Exception e)
+           {
+        	   			return null;
+           }
+           
+            
+            
             return partition;
         }
 
