@@ -44,10 +44,16 @@ public class Tuples
 
     public static ColumnSpecification componentSpecOf(ColumnSpecification column, int component)
     {
+    	if(!(column.type.isReversed()))
         return new ColumnSpecification(column.ksName,
                                        column.cfName,
                                        new ColumnIdentifier(String.format("%s[%d]", column.name, component), true),
                                        ((TupleType)column.type).type(component));
+    	else
+    		return new ColumnSpecification(column.ksName,
+                    column.cfName,
+                    new ColumnIdentifier(String.format("%s[%d]", column.name, component), true),
+                    ((ReversedType<?>)column.type).baseType);
     }
 
     /**
